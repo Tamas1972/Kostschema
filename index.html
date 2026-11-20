@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101f38">
+<title>JULIUS KOSTSCHEMA</title>
+
+<style>
+:root {
+  --bg:#101f38;
+  --panel:#192d4b;
+  --panel2:#223957;
+  --gold:#d9b765;
+  --gold2:#b99345;
+  --white:#f4f5f7;
+  --muted:#aab8c9;
+  --green:#39c98b;
+  --yellow:#e9bd51;
+  --red:#e66b70;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--white);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom);
+}
+
+header {
+  text-align:center;
+  padding:25px 0 18px;
+}
+
+.logo {
+  width:86px;
+  height:86px;
+  margin:0 auto 12px;
+  border:2px solid var(--gold);
+  border-radius:23px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--gold);
+  font-size:42px;
+  background:linear-gradient(145deg,#203858,#101f38);
+}
+
+header h1 {
+  color:var(--gold);
+  letter-spacing:4px;
+  font-size:26px;
+  margin:0;
+  font-weight:900;
+}
+
+header p {
+  color:var(--gold);
+  font-size:11px;
+  letter-spacing:3px;
+}
+
+.card {
+  background:var(--panel);
+  border:1px solid #354966;
+  border-radius:17px;
+  padding:17px;
+  margin-bottom:14px;
+}
+
+h2 {
+  font-size:17px;
+  margin:0 0 15px;
+  color:var(--gold);
+}
+
+h3 { font-size:14px; margin:0; }
+
+.small {
+  font-size:12px;
+  color:var(--muted);
+}
+
+input,select,button {
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #52627a;
+  background:var(--panel2);
+  color:white;
+  font:inherit;
+  min-width:0;
+}
+
+button { cursor:pointer; }
+
+.primary {
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#15243a;
+  border:0;
+  font-weight:800;
+}
+
+.secondary {
+  border:1px solid var(--gold);
+  color:var(--gold);
+}
+
+.danger {
+  background:#743e49;
+  border:0;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.full { grid-column:1/-1; }
+
+label {
+  font-size:12px;
+  color:var(--muted);
+}
+
+label input,label select { margin-top:5px; }
+
+.stats {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.stat {
+  background:var(--panel2);
+  border-radius:12px;
+  padding:13px;
+}
+
+.stat span {
+  font-size:11px;
+  color:var(--muted);
+}
+
+.stat strong {
+  display:block;
+  font-size:24px;
+  margin:5px 0;
+  color:var(--gold);
+}
+
+.progress {
+  height:10px;
+  background:#40516a;
+  border-radius:20px;
+  overflow:hidden;
+  margin:9px 0;
+}
+
+.fill {
+  height:100%;
+  border-radius:20px;
+  transition:.2s;
+}
+
+.green { background:var(--green); }
+.yellow { background:var(--yellow); }
+.red { background:var(--red); }
+
+.macro { margin:16px 0; }
+
+.macroline {
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+}
+
+.food {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:11px 0;
+  border-top:1px solid #40516a;
+  font-size:13px;
+}
+
+.food button {
+  width:auto;
+  padding:7px 9px;
+  font-size:11px;
+}
+
+.meal { margin-bottom:18px; }
+
+.mealhead {
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+
+.historyitem {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:12px 0;
+  border-bottom:1px solid #40516a;
+}
+
+.historyitem button {
+  width:auto;
+  padding:8px;
+  font-size:12px;
+}
+
+.actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  padding:15px;
+}
+
+#status {
+  color:var(--green);
+  font-size:12px;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🥊</div>
+  <h1>JULIUS</h1>
+  <p>KOSTSCHEMA</p>
+</header>
+
+<section class="card">
+  <h2>📅 Dagens registrering</h2>
+  <input type="date" id="date">
+  <p class="small">Välj datum för att registrera eller se tidigare dagar.</p>
+</section>
+
+<section class="card">
+  <h2>🔥 Kalorimätare</h2>
+  <div class="stats">
+    <div class="stat">
+      <span>Dagens kalorimål</span>
+      <strong id="target">2300</strong>
+      <span>kcal inklusive träning</span>
+    </div>
+    <div class="stat">
+      <span>Intagna kalorier</span>
+      <strong id="eaten">0</strong>
+      <span>kcal</span>
+    </div>
+    <div class="stat">
+      <span>Kvar att äta</span>
+      <strong id="remaining">2300</strong>
+      <span>kcal</span>
+    </div>
+    <div class="stat">
+      <span>Träningskalorier</span>
+      <strong id="exerciseTotal">0</strong>
+      <span>kcal</span>
+    </div>
+  </div>
+  <div class="progress">
+    <div id="calbar" class="fill yellow" style="width:0%"></div>
+  </div>
+  <div class="small" id="calstatus"></div>
+</section>
+
+<section class="card">
+  <h2>🥑 Makronutrienter</h2>
+  <div id="macros"></div>
+</section>
+
+<section class="card">
+  <h2>🏋️ Registrera träning</h2>
+  <div class="grid">
+    <label class="full">Träningsform
+      <input id="trainingName" placeholder="Ex. Muay Thai, styrketräning">
+    </label>
+    <label class="full">Förbrända kalorier
+      <input id="trainingCalories" type="number" min="0" placeholder="350">
+    </label>
+  </div>
+  <button class="primary" style="margin-top:12px" onclick="addTraining()">+ Spara träning</button>
+  <div id="trainingList"></div>
+</section>
+
+
+<section class="card">
+  <h2>🍽️ Registrera mat</h2>
+  <div class="grid">
+    <label class="full">Måltid
+      <select id="meal">
+        <option>Frukost</option>
+        <option>Lunch</option>
+        <option>Middag</option>
+        <option>Mellanmål</option>
+      </select>
+    </label>
+
+    <label class="full">Livsmedel eller maträtt
+      <input id="foodName" placeholder="Ex. Kyckling med ris">
+    </label>
+
+    <label>Protein (g)
+      <input id="protein" type="number" min="0" step="0.1" placeholder="0">
+    </label>
+
+    <label>Fett (g)
+      <input id="fat" type="number" min="0" step="0.1" placeholder="0">
+    </label>
+
+    <label>Kolhydrater (g)
+      <input id="carbs" type="number" min="0" step="0.1" placeholder="0">
+    </label>
+
+    <div class="stat">
+      <span>Beräknade kalorier</span>
+      <strong id="preview">0</strong>
+      <span>kcal</span>
+    </div>
+  </div>
+
+  <button class="primary" style="margin-top:12px" onclick="addFood()">+ Spara måltid</button>
+  <button class="secondary" style="margin-top:8px" onclick="saveFavorite()">☆ Spara som favorit</button>
+</section>
+
+<section class="card">
+  <h2>⭐ Mina favoriträtter</h2>
+  <p class="small">Välj en sparad rätt för att återanvända den.</p>
+  <div id="favorites"></div>
+</section>
+
+<section class="card">
+  <h2>📋 Dagens måltider</h2>
+  <div id="meals"></div>
+</section>
+
+<section class="card">
+  <h2>📈 Historik</h2>
+  <div id="history"></div>
+</section>
+
+<section class="card">
+  <h2>⚙️ Målvärden</h2>
+  <div class="grid">
+    <label>Grundbehov kcal
+      <input id="baseGoal" type="number" value="2300">
+    </label>
+    <label>Protein g
+      <input id="proteinGoal" type="number" value="175">
+    </label>
+    <label>Fett g
+      <input id="fatGoal" type="number" value="75">
+    </label>
+    <label>Kolhydrater g
+      <input id="carbsGoal" type="number" value="231">
+    </label>
+  </div>
+  <button class="primary" style="margin-top:12px" onclick="saveGoals()">Spara målvärden</button>
+</section>
+
+<section class="card">
+  <h2>💾 Säkerhetskopiering</h2>
+  <p class="small">Exportera din kosthistorik och dina favoriter eller återställ en tidigare kopia.</p>
+  <div class="actions">
+    <button class="primary" onclick="exportData()">Exportera data</button>
+    <button class="secondary" onclick="document.getElementById('importFile').click()">Importera data</button>
+  </div>
+  <input id="importFile" type="file" accept=".json,application/json" hidden>
+  <div id="status">Startar sparfunktionen...</div>
+</section>
+
+<footer>
+  JULIUS KOSTSCHEMA · MUAY THAI EDITION
+</footer>
+
+
+<script>
+"use strict";
+
+const KEY = "julius_data_v1";
+const GOALS_KEY = "julius_goals_v1";
+const FAV_KEY = "julius_favorites_v1";
+
+let db = {};
+let favorites = [];
+let goals = {
+  base:2300,
+  protein:175,
+  fat:75,
+  carbs:231
+};
+
+const $ = id => document.getElementById(id);
+
+function makeId() {
+  return Date.now().toString(36) +
+    Math.random().toString(36).slice(2);
+}
+
+function localDate() {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,"0"),
+    String(d.getDate()).padStart(2,"0")
+  ].join("-");
+}
+
+function setStatus(message, ok=true) {
+  $("status").textContent = message;
+  $("status").style.color = ok ? "#39c98b" : "#ed7777";
+}
+
+function loadData() {
+  try {
+    db = JSON.parse(localStorage.getItem(KEY) || "{}");
+    goals = {
+      ...goals,
+      ...JSON.parse(localStorage.getItem(GOALS_KEY) || "{}")
+    };
+    favorites = JSON.parse(
+      localStorage.getItem(FAV_KEY) || "[]"
+    );
+
+    if (!db || typeof db !== "object") db = {};
+    if (!Array.isArray(favorites)) favorites = [];
+
+    setStatus("✓ Dina data har lästs in");
+  } catch(e) {
+    db = {};
+    favorites = [];
+    setStatus("Kunde inte läsa tidigare data.", false);
+  }
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(db));
+    localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+    localStorage.setItem(FAV_KEY, JSON.stringify(favorites));
+    setStatus("✓ Sparat på denna enhet");
+    return true;
+  } catch(e) {
+    setStatus("Sparningen misslyckades. Exportera en säkerhetskopia.", false);
+    return false;
+  }
+}
+
+function day() {
+  const date = $("date").value;
+
+  if (!db[date]) {
+    db[date] = {
+      foods: [],
+      training: []
+    };
+  }
+
+  if (!Array.isArray(db[date].foods)) {
+    db[date].foods = [];
+  }
+
+  if (!Array.isArray(db[date].training)) {
+    db[date].training = [];
+  }
+
+  return db[date];
+}
+
+function calories(p,f,c) {
+  return Math.round(p*4 + f*9 + c*4);
+}
+
+function sums() {
+  const d = day();
+
+  const p = d.foods.reduce((a,x)=>a+x.p,0);
+  const f = d.foods.reduce((a,x)=>a+x.f,0);
+  const c = d.foods.reduce((a,x)=>a+x.c,0);
+  const e = d.training.reduce((a,x)=>a+x.kcal,0);
+
+  return {
+    p,f,c,e,
+    kcal:calories(p,f,c)
+  };
+}
+
+function color(value,goal) {
+  const ratio = goal ? value/goal : 0;
+
+  if (ratio > 1.05) return "red";
+  if (ratio >= 0.75) return "green";
+  return "yellow";
+}
+
+function bar(value,goal) {
+  const percent = goal
+    ? Math.min(100,value/goal*100)
+    : 0;
+
+  return `
+    <div class="progress">
+      <div class="fill ${color(value,goal)}"
+        style="width:${percent}%"></div>
+    </div>
+  `;
+}
+
+function esc(value) {
+  return String(value).replace(/[&<>"']/g,ch=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[ch]);
+}
+
+function updatePreview() {
+  const p = Number($("protein").value)||0;
+  const f = Number($("fat").value)||0;
+  const c = Number($("carbs").value)||0;
+
+  $("preview").textContent = calories(p,f,c);
+}
+
+async function addFood() {
+  const name = $("foodName").value.trim();
+  const p = Number($("protein").value)||0;
+  const f = Number($("fat").value)||0;
+  const c = Number($("carbs").value)||0;
+
+  if (!name) {
+    alert("Ange ett livsmedel eller en maträtt.");
+    return;
+  }
+
+  if (p<0 || f<0 || c<0) {
+    alert("Makronutrienter får inte vara negativa.");
+    return;
+  }
+
+  day().foods.push({
+    id:makeId(),
+    name,
+    meal:$("meal").value,
+    p,f,c,
+    kcal:calories(p,f,c)
+  });
+
+  const ok = save();
+
+  if (ok) {
+    $("foodName").value = "";
+    $("protein").value = "";
+    $("fat").value = "";
+    $("carbs").value = "";
+    $("preview").textContent = "0";
+    render();
+    setStatus("✓ Måltiden har sparats");
+  }
+}
+
+async function addTraining() {
+  const name = $("trainingName").value.trim();
+  const kcal = Number($("trainingCalories").value);
+
+  if (!name || !Number.isFinite(kcal) || kcal<=0) {
+    alert("Ange träningsform och giltiga kalorier.");
+    return;
+  }
+
+  day().training.push({
+    id:makeId(),
+    name,
+    kcal:Math.round(kcal)
+  });
+
+  const ok = save();
+
+  if (ok) {
+    $("trainingName").value = "";
+    $("trainingCalories").value = "";
+    render();
+    setStatus("✓ Träningen har sparats");
+  }
+}
+
+function deleteFood(id) {
+  day().foods = day().foods.filter(x=>x.id!==id);
+  save();
+  render();
+}
+
+function deleteTraining(id) {
+  day().training = day().training.filter(x=>x.id!==id);
+  save();
+  render();
+}
+
+function saveFavorite() {
+  const name = $("foodName").value.trim();
+  const p = Number($("protein").value)||0;
+  const f = Number($("fat").value)||0;
+  const c = Number($("carbs").value)||0;
+
+  if (!name) {
+    alert("Ange ett maträttsnamn först.");
+    return;
+  }
+
+  favorites.push({
+    id:makeId(),
+    name,p,f,c
+  });
+
+  if (save()) {
+    render();
+    setStatus("✓ Favoriten har sparats");
+  }
+}
+
+function useFavorite(id) {
+  const x = favorites.find(x=>x.id===id);
+  if (!x) return;
+
+  $("foodName").value = x.name;
+  $("protein").value = x.p;
+  $("fat").value = x.f;
+  $("carbs").value = x.c;
+
+  updatePreview();
+  $("foodName").scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+}
+
+function deleteFavorite(id) {
+  favorites = favorites.filter(x=>x.id!==id);
+  save();
+  render();
+}
+
+function saveGoals() {
+  const next = {
+    base:Number($("baseGoal").value),
+    protein:Number($("proteinGoal").value),
+    fat:Number($("fatGoal").value),
+    carbs:Number($("carbsGoal").value)
+  };
+
+  if (Object.values(next).some(x=>
+    !Number.isFinite(x)||x<=0
+  )) {
+    alert("Alla målvärden måste vara större än noll.");
+    return;
+  }
+
+  goals = next;
+  save();
+  render();
+  setStatus("✓ Målvärden sparade");
+}
+
+
+function render() {
+  const s = sums();
+  const target = goals.base + s.e;
+  const remaining = target - s.kcal;
+
+  $("target").textContent = target;
+  $("eaten").textContent = s.kcal;
+  $("remaining").textContent = remaining;
+  $("exerciseTotal").textContent = s.e;
+
+  $("calbar").style.width =
+    Math.min(100,s.kcal/target*100)+"%";
+
+  $("calbar").className =
+    "fill "+color(s.kcal,target);
+
+  $("calstatus").textContent = remaining>=0
+    ? "Du har "+remaining+" kcal kvar."
+    : "Du ligger "+Math.abs(remaining)+" kcal över budgeten.";
+
+  const macros = [
+    ["Protein",s.p,goals.protein],
+    ["Fett",s.f,goals.fat],
+    ["Kolhydrater",s.c,goals.carbs]
+  ];
+
+  $("macros").innerHTML = macros.map(([name,value,goal])=>`
+    <div class="macro">
+      <div class="macroline">
+        <strong>${name}</strong>
+        <span>${value.toFixed(1)} / ${goal} g</span>
+      </div>
+      ${bar(value,goal)}
+    </div>
+  `).join("");
+
+  const names = ["Frukost","Lunch","Middag","Mellanmål"];
+
+  $("meals").innerHTML = names.map(name=>{
+    const items = day().foods.filter(x=>x.meal===name);
+    const total = items.reduce((a,x)=>a+x.kcal,0);
+
+    return `
+      <div class="meal">
+        <div class="mealhead">
+          <h3>${name}</h3>
+          <strong>${total} kcal</strong>
+        </div>
+        ${items.length ? items.map(x=>`
+          <div class="food">
+            <div>
+              <strong>${esc(x.name)}</strong><br>
+              <span class="small">
+                P ${x.p}g · F ${x.f}g · K ${x.c}g · ${x.kcal} kcal
+              </span>
+            </div>
+            <button class="danger"
+              onclick="deleteFood('${x.id}')">Ta bort</button>
+          </div>
+        `).join("") : '<p class="small">Inga måltider registrerade.</p>'}
+      </div>
+    `;
+  }).join("");
+
+  $("trainingList").innerHTML =
+    day().training.map(x=>`
+      <div class="food">
+        <span>${esc(x.name)} · ${x.kcal} kcal</span>
+        <button class="danger"
+          onclick="deleteTraining('${x.id}')">Ta bort</button>
+      </div>
+    `).join("") || '<p class="small">Ingen träning registrerad.</p>';
+
+  renderFavorites();
+  renderHistory();
+}
+
+function renderFavorites() {
+  $("favorites").innerHTML = favorites.length
+    ? favorites.map(x=>`
+      <div class="food">
+        <div>
+          <strong>${esc(x.name)}</strong><br>
+          <span class="small">
+            P ${x.p}g · F ${x.f}g · K ${x.c}g · ${calories(x.p,x.f,x.c)} kcal
+          </span>
+        </div>
+        <div style="display:flex;gap:5px">
+          <button class="primary"
+            onclick="useFavorite('${x.id}')">Använd</button>
+          <button class="danger"
+            onclick="deleteFavorite('${x.id}')">×</button>
+        </div>
+      </div>
+    `).join("")
+    : '<p class="small">Inga favoriter sparade ännu.</p>';
+}
+
+function renderHistory() {
+  const dates = Object.keys(db).sort().reverse();
+
+  $("history").innerHTML = dates.length
+    ? dates.map(date=>{
+        const d = db[date];
+        const kcal = d.foods.reduce((a,x)=>a+x.kcal,0);
+        const training = d.training.reduce((a,x)=>a+x.kcal,0);
+
+        return `
+          <div class="historyitem">
+            <div>
+              <strong>${esc(date)}</strong><br>
+              <span class="small">
+                ${kcal} kcal mat · ${training} kcal träning
+              </span>
+            </div>
+            <button class="secondary"
+              onclick="openDay('${date}')">Visa dag</button>
+          </div>
+        `;
+      }).join("")
+    : '<p class="small">Din historik visas här när du börjar registrera.</p>';
+}
+
+function openDay(date) {
+  $("date").value = date;
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function exportData() {
+  const backup = {
+    app:"JULIUS KOSTSCHEMA",
+    version:1,
+    exportedAt:new Date().toISOString(),
+    db,
+    goals,
+    favorites
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(backup,null,2)],
+    {type:"application/json"}
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "julius-kostschema-backup.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  setStatus("✓ Säkerhetskopian har exporterats");
+}
+
+$("importFile").addEventListener("change",async event=>{
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const backup = JSON.parse(await file.text());
+
+    if (
+      backup.app!=="JULIUS KOSTSCHEMA" ||
+      !backup.db ||
+      !backup.goals ||
+      !Array.isArray(backup.favorites)
+    ) {
+      throw new Error("Ogiltig säkerhetskopia");
+    }
+
+    if (!confirm("Vill du ersätta nuvarande data med säkerhetskopian?")) {
+      return;
+    }
+
+    db = backup.db;
+    goals = backup.goals;
+    favorites = backup.favorites;
+
+    save();
+
+    $("baseGoal").value = goals.base;
+    $("proteinGoal").value = goals.protein;
+    $("fatGoal").value = goals.fat;
+    $("carbsGoal").value = goals.carbs;
+
+    render();
+    setStatus("✓ Säkerhetskopian har återställts");
+
+  } catch(e) {
+    alert("Kunde inte läsa säkerhetskopian.");
+  } finally {
+    event.target.value = "";
+  }
+});
+
+["protein","fat","carbs"].forEach(id=>{
+  $(id).addEventListener("input",updatePreview);
+});
+
+$("date").addEventListener("change",()=>{
+  render();
+});
+
+function init() {
+  $("date").value = localDate();
+
+  loadData();
+
+  $("baseGoal").value = goals.base;
+  $("proteinGoal").value = goals.protein;
+  $("fatGoal").value = goals.fat;
+  $("carbsGoal").value = goals.carbs;
+
+  render();
+}
+
+init();
+</script>
+
+</body>
+</html>
+
+
